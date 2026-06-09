@@ -1,8 +1,58 @@
-# PDF 文件输入目录，程序会递归扫描该目录下的 .pdf 文件。
-input: ./input
+# PDF 文件输入目录。
+# 程序会递归扫描该目录下的 .pdf/.PDF 文件。
+input_folder: ./input
 
-# 图片输出目录，每个 PDF 会输出到该目录下的对应子文件夹中。
-output: ./output
+# 图片输出根目录。
+# compress_type 为 none 时，每个 PDF 会在该目录下创建一个子目录。
+# compress_type 为 zip/lz4/zstd 时，每个 PDF 会在该目录下创建一个压缩文件。
+output_folder: ./output
+
+# PDF 文件名过滤正则表达式。
+# 为空字符串时不过滤：input_folder 下所有 PDF 都会处理。
+# 非空时只匹配文件名，不匹配完整路径；只有匹配成功的 PDF 才会输出。
+# 捕获组会按顺序传给 output_format。
+# 示例文件名：
+#   2009.05.29《1Q84》村上春树.pdf
+# 示例捕获结果：
+#   1=2009, 2=05, 3=29, 4=1Q84
+input_filter_template: '(\d+)\.(\d+)\.(\d+)《(.+)》.+\.pdf'
+
+# 输出格式，必须非空。
+# compress_type: none 时，它表示输出子目录名。
+#   结果示例：./output/2009.05.29-1Q84/
+# compress_type: zip/lz4/zstd 时，它表示压缩文件名，建议显式写扩展名。
+#   zip  示例：output_format: "%04d.%02d.%02d-%s.zip"
+#   lz4  示例：output_format: "%04d.%02d.%02d-%s.tar.lz4"
+#   zstd 示例：output_format: "%04d.%02d.%02d-%s.tar.zst"
+# 数字捕获组会自动转为整数，因此可使用 %04d、%02d。
+output_format: "%04d.%02d.%02d-%s"
+
+# 输出图片文件名格式，不需要填写文件后缀。
+# 参数只有一个：当前 PDF 内的图片序号，从 1 开始。
+# 示例：output_filename_format: "%04d"
+#   结果：0001.png、0002.jpg
+# 示例：output_filename_format: "image-%04d"
+#   结果：image-0001.png、image-0002.jpg
+output_filename_format: "%04d"
+
+# 压缩类型。
+# none：不压缩，直接输出图片目录。
+# zip：输出 zip 文件；compress_password 非空时使用 AES-256 加密。
+# lz4：输出 tar.lz4 文件；不支持密码。
+# zstd：输出 tar.zst 文件；不支持密码。
+compress_type: none
+
+# 压缩等级，仅 compress_type 不为 none 时有意义。
+# 0 表示使用库默认或最快设置。
+# lz4：有效范围按 0-9 归一化，越大压缩率越高但更慢。
+# zstd：按数值映射到 fastest/default/better/best 档位。
+# zip：当前纯 Go zip 实现使用默认 deflate 设置，压缩等级不生效。
+compress_level: 0
+
+# 压缩密码。
+# 空字符串表示不设置密码。
+# 目前仅 zip 支持密码；lz4/zstd 不支持密码。
+compress_password: ""
 
 # PDF 打开密码。
 # 如果 PDF 没有密码，请保留该配置项并设置为空字符串：password: ""
