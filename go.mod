@@ -3,7 +3,10 @@ module github.com/Kylineyes/image_pack_extract
 go 1.26.4
 
 require (
+	github.com/klauspost/compress v1.18.5
 	github.com/pdfcpu/pdfcpu v0.11.1
+	github.com/pierrec/lz4/v4 v4.1.26
+	github.com/yeka/zip v0.0.0-20231116150916-03d6312748a9
 	gopkg.in/yaml.v2 v2.4.0
 )
 
