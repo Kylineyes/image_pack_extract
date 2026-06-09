@@ -1,0 +1,9 @@
+# PDF 文件输入目录，程序会递归扫描该目录下的 .pdf 文件。
+input: ./input
+
+# 图片输出目录，每个 PDF 会输出到该目录下的对应子文件夹中。
+output: ./output
+
+# PDF 打开密码。
+# 如果 PDF 没有密码，请保留该配置项并设置为空字符串：password: ""
+password: thepassword
